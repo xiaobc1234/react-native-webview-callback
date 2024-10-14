@@ -1,15 +1,15 @@
-import {EventEmitter} from 'events';
+import { EventEmitter } from "events";
 export const eventEmiter = new EventEmitter();
 export enum CallType {
-  call = 'call', // 调用
-  callBack = 'callBack', // 回调
+  call = "call", // 调用
+  callBack = "callBack", // 回调
 }
 declare global {
   interface Window {
-    ReactNativeWebView: any
+    ReactNativeWebView: any;
   }
 }
-export const defaultChannelName = 'ReactNativeWebView'; // 默认渠道名称
+export const defaultChannelName = "ReactNativeWebView"; // 默认渠道名称
 
 export interface MethodArgs {
   channelName?: string; // 渠道名称，默认'ReactNativeWebView'，一般都使用同一个渠道，不同业务或者应用可以使用不同的渠道名，避免通信污染
@@ -27,11 +27,14 @@ export interface MethodCallArgs extends MethodArgs {
 // H5初始化监听
 export const useH5AddListener = (bridgeH5Api: any = {}) => {
   // 可以传进来一个meargeApi进来
-  const messageFn = event => {
+  const messageFn = (event) => {
     try {
       let dataSource = event?.data;
-      if (dataSource && dataSource !== 'undefined') {
-        const messageData: MethodCallArgs = dataSource && JSON.parse(dataSource) || {};
+      if (dataSource && dataSource !== "undefined") {
+        const messageData: MethodCallArgs =
+          dataSource && typeof dataSource === "string"
+            ? JSON.parse(dataSource)
+            : {};
         const {
           channelName,
           methodType,
@@ -51,7 +54,7 @@ export const useH5AddListener = (bridgeH5Api: any = {}) => {
             // react native 调用H5的方法
             if (
               bridgeH5Api.hasOwnProperty(sourceMethodName) &&
-              typeof bridgeH5Api[sourceMethodName] === 'function'
+              typeof bridgeH5Api[sourceMethodName] === "function"
             ) {
               bridgeH5Api[sourceMethodName](data)
                 .then((res: any) => {
@@ -62,10 +65,10 @@ export const useH5AddListener = (bridgeH5Api: any = {}) => {
                     methodName: successKey,
                   };
                   window?.ReactNativeWebView?.postMessage(
-                    JSON.stringify(successObj),
+                    JSON.stringify(successObj)
                   );
                 })
-                .catch(err => {
+                .catch((err) => {
                   const errObj = {
                     ...messageData,
                     data: err,
@@ -73,7 +76,7 @@ export const useH5AddListener = (bridgeH5Api: any = {}) => {
                     methodName: errorKey,
                   };
                   window?.ReactNativeWebView?.postMessage(
-                    JSON.stringify(errObj),
+                    JSON.stringify(errObj)
                   );
                 });
             }
@@ -84,12 +87,12 @@ export const useH5AddListener = (bridgeH5Api: any = {}) => {
       console.error(error);
     }
   };
-  window?.addEventListener('message', messageFn, {
+  window?.addEventListener("message", messageFn, {
     capture: true,
     passive: true,
   });
-  window.addEventListener('beforeunload', ()=>{
-    window?.removeEventListener('message', messageFn);
+  window.addEventListener("beforeunload", () => {
+    window?.removeEventListener("message", messageFn);
   });
 };
 
@@ -99,13 +102,14 @@ export interface useReactNativeAddListenerArgs {
   event: any;
 }
 export const useReactNativeAddListener = (
-  messageProps: useReactNativeAddListenerArgs,
+  messageProps: useReactNativeAddListenerArgs
 ) => {
-  const {bridgeReactNativeApi, webViewRef, event} = messageProps;
+  const { bridgeReactNativeApi, webViewRef, event } = messageProps;
   const dataSource = event?.nativeEvent?.data;
   try {
-    if (dataSource && dataSource !== 'undefined') {
-      const messageData: MethodCallArgs = dataSource && JSON.parse(dataSource) || {};
+    if (dataSource && dataSource !== "undefined") {
+      const messageData: MethodCallArgs =
+        (dataSource && JSON.parse(dataSource)) || {};
       const {
         channelName,
         methodType,
@@ -125,7 +129,7 @@ export const useReactNativeAddListener = (
           // H5调用react native的方法
           if (
             bridgeReactNativeApi.hasOwnProperty(sourceMethodName) &&
-            typeof bridgeReactNativeApi[sourceMethodName] === 'function'
+            typeof bridgeReactNativeApi[sourceMethodName] === "function"
           ) {
             bridgeReactNativeApi[sourceMethodName](data)
               .then((res: any) => {
@@ -135,16 +139,19 @@ export const useReactNativeAddListener = (
                   methodType: CallType.callBack,
                   methodName: successKey,
                 };
-                webViewRef?.current?.postMessage(JSON.stringify(successObj), '*');
+                webViewRef?.current?.postMessage(
+                  JSON.stringify(successObj),
+                  "*"
+                );
               })
-              .catch(err => {
+              .catch((err) => {
                 const errObj = {
                   ...messageData,
                   data: err,
                   methodType: CallType.callBack,
                   methodName: errorKey,
                 };
-                webViewRef?.current?.postMessage(JSON.stringify(errObj), '*');
+                webViewRef?.current?.postMessage(JSON.stringify(errObj), "*");
               });
           }
         }
@@ -161,8 +168,8 @@ export const h5CallreactNative = (dataParms: MethodArgs) => {
     const {
       channelName = defaultChannelName,
       methodType = CallType.call,
-      methodName = 'methodName',
-      data = '',
+      methodName = "methodName",
+      data = "",
     } = dataParms;
     const timeStr = `${new Date().getTime()}`;
     const successKey = `${methodName}_${timeStr}_success`;
@@ -178,11 +185,11 @@ export const h5CallreactNative = (dataParms: MethodArgs) => {
       errorKey,
     };
     // 挂载成功的回调
-    eventEmiter.on(successKey, res => {
+    eventEmiter.on(successKey, (res) => {
       resolve(res);
     });
     // 挂载失败的回调
-    eventEmiter.on(errorKey, err => {
+    eventEmiter.on(errorKey, (err) => {
       reject(err);
     });
     window?.ReactNativeWebView?.postMessage(JSON.stringify(obj));
@@ -195,15 +202,15 @@ export interface reactNativeCallH5Args {
 }
 // 统一封装react native调用H5及回调返回，通过promise的方式
 export const reactNativeCallH5 = (
-  reactNativeCallH5Props: reactNativeCallH5Args,
+  reactNativeCallH5Props: reactNativeCallH5Args
 ) => {
-  const {dataParms, webViewRef} = reactNativeCallH5Props;
+  const { dataParms, webViewRef } = reactNativeCallH5Props;
   return new Promise((resolve, reject) => {
     const {
       channelName = defaultChannelName,
       methodType = CallType.call,
-      methodName = 'methodName',
-      data = '',
+      methodName = "methodName",
+      data = "",
     } = dataParms;
     const timeStr = `${new Date().getTime()}`;
     const successKey = `${methodName}_${timeStr}_success`;
@@ -219,13 +226,13 @@ export const reactNativeCallH5 = (
       errorKey,
     };
     // 挂载成功的回调
-    eventEmiter.on(successKey, res => {
+    eventEmiter.on(successKey, (res) => {
       resolve(res);
     });
     // 挂载失败的回调
-    eventEmiter.on(errorKey, err => {
+    eventEmiter.on(errorKey, (err) => {
       reject(err);
     });
-    webViewRef?.current?.postMessage(JSON.stringify(obj), '*');
+    webViewRef?.current?.postMessage(JSON.stringify(obj), "*");
   });
 };

@@ -1,5 +1,8 @@
 # react-native-webview-callback
 
+
+-  兼容 devtool 调试时，"react-devtools-bridge" 的事件处理
+
 [![NPM version](https://img.shields.io/npm/v/react-native-webview-callback.svg?style=flat)](https://npmjs.org/package/react-native-webview-callback)
 [![NPM downloads](http://img.shields.io/npm/dm/react-native-webview-callback.svg?style=flat)](https://npmjs.org/package/react-native-webview-callback)
 

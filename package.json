@@ -1,5 +1,5 @@
 {
-  "name": "react-native-webview-callback",
+  "name": "@cniot/react-native-webview-callback",
   "version": "0.0.5",
   "description": "A lightweight tool library for connecting React Native and webview, providing communication and success and failure callback methods",
   "main": "./dist/index.js",
@@ -33,6 +33,7 @@
   },
   "homepage": "https://github.com/liutaohz/react-native-webview-callback#readme",
   "devDependencies": {
+    "@babel/core": "^7.25.8",
     "@babel/plugin-transform-runtime": "^7.22.15",
     "@babel/preset-env": "^7.22.20",
     "@rollup/plugin-babel": "^6.0.4",
