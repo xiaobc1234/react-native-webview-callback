@@ -1,6 +1,6 @@
 {
   "name": "@cniot/react-native-webview-callback",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A lightweight tool library for connecting React Native and webview, providing communication and success and failure callback methods",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",

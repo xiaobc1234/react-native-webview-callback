@@ -31,10 +31,17 @@ export const useH5AddListener = (bridgeH5Api: any = {}) => {
     try {
       let dataSource = event?.data;
       if (dataSource && dataSource !== "undefined") {
-        const messageData: MethodCallArgs =
-          dataSource && typeof dataSource === "string"
-            ? JSON.parse(dataSource)
-            : {};
+        // @ts-ignore
+        let messageData: MethodCallArgs = {};
+        try {
+          messageData =
+            dataSource && typeof dataSource === "string"
+              ? JSON.parse(dataSource)
+              : {};
+        } catch (e) {
+          // @ts-ignore
+          messageData = {};
+        }
         const {
           channelName,
           methodType,
@@ -108,8 +115,17 @@ export const useReactNativeAddListener = (
   const dataSource = event?.nativeEvent?.data;
   try {
     if (dataSource && dataSource !== "undefined") {
-      const messageData: MethodCallArgs =
-        (dataSource && JSON.parse(dataSource)) || {};
+      // @ts-ignore
+      let messageData: MethodCallArgs = {};
+      try {
+        messageData =
+          dataSource && typeof dataSource === "string"
+            ? JSON.parse(dataSource)
+            : {};
+      } catch (e) {
+        // @ts-ignore
+        messageData = {};
+      }
       const {
         channelName,
         methodType,
